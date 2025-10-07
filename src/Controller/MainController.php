@@ -75,7 +75,8 @@ final class MainController extends AbstractController
         $status = $request->query->get('status', 'all');
         $search = $request->query->get('search');
         $contacts = $repository->paginate($page, $limit, $status, $search);
-        $totalPages = ceil($repository->count() / $limit);
+        // dd($contacts, count($contacts));
+        $totalPages = ceil($repository->countResult($page, $limit, $status, $search) / $limit);
 
         return $this->render('main/list.html.twig', [
             'contacts' => $contacts,
