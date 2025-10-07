@@ -20,26 +20,31 @@ class ContactRepository extends ServiceEntityRepository
     /**
      * @return Contact[] Returns an array of Contact objects
      */
-    public function paginate(int $page, int $limit, string $search = null): array
+    public function paginate(int $page, int $limit, string $status, string $search = null): array
     {
         $offset = ($page -1) * $limit;
 
         $qb = $this->createQueryBuilder('c');
-        $qb
+        
+        if ($status !== 'all') {
+            $qb->andWhere($qb->expr()->eq('c.status', ':status'));
+             $qb->setParameter('status',$status);
+        }
+        if ($search !== null) {
+            $qb
             ->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->like('c.firstName', ':search'),
                     $qb->expr()->like('c.name', ':search'),
                 ),
-            )
-            ->setParameter('search', '%'.$search.'%');
-
+                )
+                ->setParameter('search', '%'.$search.'%');                
+            }
         $qb
-            ->setFirstResult($offset)
-            ->setMaxResults($limit);
+        ->setFirstResult($offset)
+        ->setMaxResults($limit);
         
         return $qb->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }
