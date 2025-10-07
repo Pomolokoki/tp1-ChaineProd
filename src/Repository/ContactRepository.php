@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Contact;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @extends ServiceEntityRepository<Contact>
@@ -19,14 +20,25 @@ class ContactRepository extends ServiceEntityRepository
     /**
      * @return Contact[] Returns an array of Contact objects
      */
-    public function paginate(int $page, int $limit): array
+    public function paginate(int $page, int $limit, string $search = null): array
     {
         $offset = ($page -1) * $limit;
 
-        return $this->createQueryBuilder('c')
+        $qb = $this->createQueryBuilder('c');
+        $qb
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->like('c.firstName', ':search'),
+                    $qb->expr()->like('c.name', ':search'),
+                ),
+            )
+            ->setParameter('search', '%'.$search.'%');
+
+        $qb
             ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->getQuery()
+            ->setMaxResults($limit);
+        
+        return $qb->getQuery()
             ->getResult()
         ;
     }
