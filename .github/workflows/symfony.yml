@@ -58,8 +58,8 @@ jobs:
           server: ${{secrets.FTP_HOST}}
           username: ${{secrets.FTP_USER}}
           password: ${{secrets.FTP_PWD}}
-          protocol: ftp 
-          server-dir: /var/www/myapp/
+          port: ${{secrets.FTP_PORT}}
+          protocol: ftp
           script: |
             cd /var/www/myapp
             git pull origin main
