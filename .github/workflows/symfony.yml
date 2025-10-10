@@ -55,7 +55,7 @@ jobs:
       - name: Deploy test
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          host: ${{secrets.FTP_HOST}}
+          server: ${{secrets.FTP_HOST}}
           username: ${{secrets.FTP_USER}}
           password: ${{secrets.FTP_PWD}}
           protocol: ftp 
